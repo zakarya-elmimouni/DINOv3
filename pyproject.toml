@@ -1,0 +1,35 @@
+[project]
+name = "dinov3"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "albumentations>=2.0.8",
+    "dataset>=1.6.2",
+    "matplotlib>=3.10.7",
+    "opencv-python>=4.12.0.88",
+    "requests>=2.32.5",
+    "safetensors>=0.6.2",
+    "scikit-learn>=1.7.2",
+    "scipy>=1.16.2",
+    "seaborn>=0.13.2",
+    "termcolor>=3.1.0",
+    "torch>=2.9.0",
+    "torchmetrics>=1.8.2",
+    "torchvision>=0.24.0",
+    "tqdm>=4.67.1",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu128", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+torchvision = [
+  { index = "pytorch-cu128", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]

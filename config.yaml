@@ -1,0 +1,50 @@
+# -------------------
+# Model Configuration
+# -------------------
+model:
+  # Use smaller model since pretrained weights aren't loading correctly
+  # Options: 'dinov3_vits16' (small, ~22M params), 'dinov3_vitb16' (base, ~86M params), 'dinov3_vitl16' (large, ~304M params)
+  backbone: 'dinov3_vitl16'
+  
+  # Leave empty to train from scratch, or provide path to .pth file
+  backbone_weights_path: 'weights/dinov3-vitl16-pretrain-lvd1689m.pth'
+  
+  freeze_backbone: False  # Train the backbone from scratch
+  adapter_dim: 256
+  num_queries: 100
+  img_size: 518 # Should match the img_size in the dataset section
+
+# -------------------
+# Dataset Paths
+# -------------------
+dataset:
+  train_img_dir: 'dataset/train/images'
+  train_label_dir: 'dataset/train/labels'
+  val_img_dir: 'dataset/val/images'
+  val_label_dir: 'dataset/val/labels'
+
+# ----------------------
+# Optimizer & Scheduler
+# ----------------------
+optimizer:
+  epochs: 50
+  batch_size: 8  # Increased since smaller model uses less memory
+  learning_rate: 0.001  # Higher LR for training from scratch
+  weight_decay: 0.0001
+
+# -------------------
+# Loss Weights
+# -------------------
+loss_weights:
+  class: 2.0
+  bbox: 5.0
+  giou: 2.0
+  obj: 1.0
+
+# -------------------
+# General Settings
+# -------------------
+checkpoint_dir: 'checkpoints'
+num_workers: 0 # Number of CPU cores for data loading. Set to 0 if you have memory issues on Windows.
+use_amp: True # Use Automatic Mixed Precision (recommended for modern GPUs)
+patience: 10  # Early stopping patience (number of epochs without improvement)
