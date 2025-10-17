@@ -29,7 +29,12 @@ def generalized_box_iou(boxes1, boxes2):
     return iou - (area_c - union) / (area_c + 1e-6)
 
 class HungarianMatcher(nn.Module):
-    def __init__(self, cost_class=2.0, cost_bbox=5.0, cost_giou=2.0):
+    """
+    Hungarian algorithm for matching predictions to ground truth.
+    Balanced costs to allow model to learn both localization and classification.
+    """
+    
+    def __init__(self, cost_class=1.0, cost_bbox=5.0, cost_giou=2.0):
         super().__init__()
         self.cost_class = cost_class
         self.cost_bbox = cost_bbox
@@ -55,11 +60,15 @@ class HungarianMatcher(nn.Module):
         return list(zip(pred_idx, gt_idx))
 
 class DetectionLoss(nn.Module):
-    def __init__(self, num_classes, matcher=None, loss_weights=None):
+    def __init__(self, num_classes, matcher=None, loss_weights=None, class_weights=None):
         super().__init__()
         self.num_classes = num_classes
         self.matcher = matcher or HungarianMatcher()
         self.loss_weights = loss_weights or {'class': 2.0, 'bbox': 5.0, 'giou': 2.0, 'obj': 1.0}
+        if class_weights is None:
+            self.class_weights = torch.ones(num_classes + 1)
+        else:
+            self.class_weights = torch.tensor(class_weights, dtype=torch.float32)
         
     def forward(self, pred_boxes_xyxy, pred_classes, pred_objectness, gt_boxes_list, gt_labels_list):
         batch_size, device = pred_boxes_xyxy.shape[0], pred_boxes_xyxy.device
@@ -96,7 +105,10 @@ class DetectionLoss(nn.Module):
             # Class loss
             cls_targets = torch.full((pred_c.shape[0],), self.num_classes, dtype=torch.long, device=device)
             cls_targets[pred_idx] = gt_l[gt_idx]
-            total_loss += self.loss_weights['class'] * F.cross_entropy(pred_c, cls_targets, reduction='mean')
+            cls_weights = self.class_weights.to(device)
+            total_loss += self.loss_weights['class'] * F.cross_entropy(
+                pred_c, cls_targets, weight=cls_weights, reduction='mean'
+            )
             loss_dict['class'] += F.cross_entropy(pred_c, cls_targets, reduction='sum')
             
             # Box losses

@@ -29,17 +29,17 @@ dataset:
 optimizer:
   epochs: 50
   batch_size: 8  # Increased since smaller model uses less memory
-  learning_rate: 0.001  # Higher LR for training from scratch
+  learning_rate: 0.0005  # Lower LR for training the adapter on frozen backbone
   weight_decay: 0.0001
 
 # -------------------
 # Loss Weights
 # -------------------
 loss_weights:
-  class: 2.0
-  bbox: 5.0
-  giou: 2.0
-  obj: 1.0
+  class: 10.0   # Reduced to encourage more predictions
+  bbox: 5.0    # Keep high - localization is important
+  giou: 2.0    # Keep same - shape matters
+  obj: 2.0     # INCREASED - penalize not predicting objects!
 
 # -------------------
 # General Settings

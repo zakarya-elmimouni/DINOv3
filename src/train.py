@@ -17,6 +17,7 @@ from .metrics import DetectionMetrics, plot_training_curves
 from .utils import AverageMeter, save_checkpoint, load_checkpoint
 from torch.optim.lr_scheduler import CosineAnnealingLR, ReduceLROnPlateau
 
+weights_file = Path('dataset/sample_weights.json')
 class Trainer:
     def __init__(self, config):
         self.config = config
@@ -38,7 +39,16 @@ class Trainer:
             freeze_backbone=config['model']['freeze_backbone']
         ).to(self.device)
         
-        self.criterion = DetectionLoss(num_classes=self.num_classes, loss_weights=config['loss_weights'])
+        if weights_file.exists():
+            with open(weights_file, 'r') as f:
+                weights_data = json.load(f)
+            class_weights = weights_data['class_weights']
+            print(f"✓ Loaded class weights: {class_weights[:self.num_classes]}")
+        else:
+            class_weights = None
+            print("⚠️  No class weights found, using equal weights")
+
+        self.criterion = DetectionLoss(num_classes=self.num_classes, loss_weights=config['loss_weights'], class_weights=class_weights)
         
         trainable_params = [p for p in self.model.parameters() if p.requires_grad]
         self.optimizer = AdamW(

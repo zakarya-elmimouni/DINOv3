@@ -1,0 +1,849 @@
+❯ uv run python run_train.py                                                                                                                                                                              
+--- Configuration Loaded ---
+  Model:
+    backbone: dinov3_vitl16
+    backbone_weights_path: weights/dinov3-vitl16-pretrain-lvd1689m.pth
+    freeze_backbone: False
+    adapter_dim: 256
+    num_queries: 100
+    img_size: 518
+  Dataset:
+    train_img_dir: dataset/train/images
+    train_label_dir: dataset/train/labels
+    val_img_dir: dataset/val/images
+    val_label_dir: dataset/val/labels
+  Optimizer:
+    epochs: 50
+    batch_size: 8
+    learning_rate: 0.0005
+    weight_decay: 0.0001
+  Loss_weights:
+    class: 1.0
+    bbox: 5.0
+    giou: 2.0
+    obj: 2.0
+  checkpoint_dir: checkpoints
+  num_workers: 0
+  use_amp: True
+  patience: 10
+--------------------------
+
+Using device: cuda
+Found 3366 valid image-label pairs.
+Auto-detecting number of classes...
+Scanning labels: 100%|███████████████████████████████████████████████| 3366/3366 [00:00<00:00, 21341.44it/s]
+Number of classes detected/set: 3
+Found 962 valid image-label pairs.
+Number of classes detected/set: 3
+
+--- Dataset Stats ---
+Train: 3366 | Val: 962 | Classes: 3
+---------------------
+
+Building 'dinov3_vitl16' architecture...
+✓ Weights loaded from dinov3-vitl16-pretrain-lvd1689m.pth
+  ✓ 100.0% of backbone parameters loaded successfully
+
+--- Model Params ---
+Total: 304,366,857 | Trainable: 304,366,857 (100.00%)
+--------------------
+
+Checkpoints will be saved to: checkpoints
+Early stopping patience: 10 epochs
+
+============================================================
+Starting Training
+============================================================
+Epoch 1/50 [Train]: 100%|██| 420/420 [05:21<00:00,  1.31it/s, total=2.763, class=4.995, bbox=0.170, giou=0.793, objectness=4.320] 
+Epoch 1/50 [Val]: 100%|████████████████| 61/61 [01:33<00:00,  1.53s/it, val_loss=2.7623] 
+
+============================================================
+Epoch 1/50 Summary
+============================================================
+Time: 415.4s
+Train Loss: 2.9326 | Val Loss: 2.7623
+Precision: 0.8091 | Recall: 0.2221 | F1: 0.3486
+TP: 534 | FP: 126 | FN: 1870
+Learning Rate: 0.000500
+============================================================
+
+✅ New best model! Val Loss: 2.7623
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.7623
+Epoch 2/50 [Train]: 100%|██| 420/420 [05:45<00:00,  1.21it/s, total=2.425, class=3.947, bbox=0.103, giou=0.844, objectness=3.607]
+Epoch 2/50 [Val]: 100%|████████████████| 61/61 [01:34<00:00,  1.56s/it, val_loss=2.5956] 
+
+============================================================
+Epoch 2/50 Summary
+============================================================
+Time: 440.8s
+Train Loss: 2.6819 | Val Loss: 2.5956
+Precision: 0.7912 | Recall: 0.2396 | F1: 0.3678
+TP: 576 | FP: 152 | FN: 1828
+Learning Rate: 0.000498
+============================================================
+
+✅ New best model! Val Loss: 2.5956
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.5956
+Epoch 3/50 [Train]: 100%|██| 420/420 [05:43<00:00,  1.22it/s, total=2.508, class=4.325, bbox=0.122, giou=0.826, objectness=3.662]
+Epoch 3/50 [Val]: 100%|████████████████| 61/61 [01:33<00:00,  1.53s/it, val_loss=2.6121] 
+
+============================================================
+Epoch 3/50 Summary
+============================================================
+Time: 436.5s
+Train Loss: 2.6241 | Val Loss: 2.6121
+Precision: 0.7744 | Recall: 0.2512 | F1: 0.3794
+TP: 604 | FP: 176 | FN: 1800
+Learning Rate: 0.000496
+============================================================
+
+⚠️  No improvement. Patience: 1/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 4/50 [Train]: 100%|██| 420/420 [05:28<00:00,  1.28it/s, total=2.411, class=3.746, bbox=0.106, giou=0.833, objectness=3.394]
+Epoch 4/50 [Val]: 100%|████████████████| 61/61 [01:28<00:00,  1.44s/it, val_loss=2.5372] 
+
+============================================================
+Epoch 4/50 Summary
+============================================================
+Time: 417.2s
+Train Loss: 2.5926 | Val Loss: 2.5372
+Precision: 0.9003 | Recall: 0.2329 | F1: 0.3701
+TP: 560 | FP: 62 | FN: 1844
+Learning Rate: 0.000492
+============================================================
+
+✅ New best model! Val Loss: 2.5372
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.5372
+Epoch 5/50 [Train]: 100%|██| 420/420 [05:23<00:00,  1.30it/s, total=2.455, class=3.995, bbox=0.118, giou=0.827, objectness=3.482]
+Epoch 5/50 [Val]: 100%|████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.5245] 
+
+============================================================
+Epoch 5/50 Summary
+============================================================
+Time: 412.0s
+Train Loss: 2.5761 | Val Loss: 2.5245
+Precision: 0.9286 | Recall: 0.2488 | F1: 0.3924
+TP: 598 | FP: 46 | FN: 1806
+Learning Rate: 0.000488
+============================================================
+
+✅ New best model! Val Loss: 2.5245
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.5245
+Epoch 6/50 [Train]: 100%|██| 420/420 [05:24<00:00,  1.30it/s, total=2.389, class=3.881, bbox=0.093, giou=0.853, objectness=3.416]
+Epoch 6/50 [Val]: 100%|████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.5317] 
+
+============================================================
+Epoch 6/50 Summary
+============================================================
+Time: 412.4s
+Train Loss: 2.5428 | Val Loss: 2.5317
+Precision: 0.9257 | Recall: 0.2488 | F1: 0.3921
+TP: 598 | FP: 48 | FN: 1806
+Learning Rate: 0.000483
+============================================================
+
+⚠️  No improvement. Patience: 1/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 7/50 [Train]: 100%|██| 420/420 [05:23<00:00,  1.30it/s, total=2.454, class=3.649, bbox=0.116, giou=0.821, objectness=3.306]
+Epoch 7/50 [Val]: 100%|████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.4971] 
+
+============================================================
+Epoch 7/50 Summary
+============================================================
+Time: 411.2s
+Train Loss: 2.5244 | Val Loss: 2.4971
+Precision: 0.8743 | Recall: 0.2723 | F1: 0.4152
+TP: 654 | FP: 94 | FN: 1748
+Learning Rate: 0.000476
+============================================================
+
+✅ New best model! Val Loss: 2.4971
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.4971
+Epoch 8/50 [Train]: 100%|██| 420/420 [05:22<00:00,  1.30it/s, total=2.469, class=4.051, bbox=0.113, giou=0.827, objectness=3.573]
+Epoch 8/50 [Val]: 100%|████████████████| 61/61 [01:29<00:00,  1.47s/it, val_loss=2.4853] 
+
+============================================================
+Epoch 8/50 Summary
+============================================================
+Time: 412.3s
+Train Loss: 2.5062 | Val Loss: 2.4853
+Precision: 0.9162 | Recall: 0.2731 | F1: 0.4208
+TP: 656 | FP: 60 | FN: 1746
+Learning Rate: 0.000469
+============================================================
+
+✅ New best model! Val Loss: 2.4853
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.4853
+Epoch 9/50 [Train]: 100%|██| 420/420 [05:26<00:00,  1.29it/s, total=2.318, class=3.252, bbox=0.090, giou=0.842, objectness=2.983]
+Epoch 9/50 [Val]: 100%|████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.4626] 
+
+============================================================
+Epoch 9/50 Summary
+============================================================
+Time: 414.2s
+Train Loss: 2.4793 | Val Loss: 2.4626
+Precision: 0.8771 | Recall: 0.2554 | F1: 0.3956
+TP: 614 | FP: 86 | FN: 1790
+Learning Rate: 0.000461
+============================================================
+
+✅ New best model! Val Loss: 2.4626
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.4626
+Epoch 10/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.718, class=4.109, bbox=0.154, giou=0.852, objectness=3.638]
+Epoch 10/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.4832] 
+
+============================================================
+Epoch 10/50 Summary
+============================================================
+Time: 411.2s
+Train Loss: 2.4773 | Val Loss: 2.4832
+Precision: 0.9673 | Recall: 0.2465 | F1: 0.3928
+TP: 592 | FP: 20 | FN: 1810
+Learning Rate: 0.000453
+============================================================
+
+⚠️  No improvement. Patience: 1/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 11/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.521, class=3.734, bbox=0.115, giou=0.841, objectness=3.323]
+Epoch 11/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.43s/it, val_loss=2.4771] 
+
+============================================================
+Epoch 11/50 Summary
+============================================================
+Time: 410.7s
+Train Loss: 2.4696 | Val Loss: 2.4771
+Precision: 0.9732 | Recall: 0.2415 | F1: 0.3869
+TP: 580 | FP: 16 | FN: 1822
+Learning Rate: 0.000443
+============================================================
+
+⚠️  No improvement. Patience: 2/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 12/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.474, class=3.614, bbox=0.122, giou=0.851, objectness=3.130]
+Epoch 12/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.4310] 
+
+============================================================
+Epoch 12/50 Summary
+============================================================
+Time: 411.4s
+Train Loss: 2.4613 | Val Loss: 2.4310
+Precision: 0.9199 | Recall: 0.2964 | F1: 0.4484
+TP: 712 | FP: 62 | FN: 1690
+Learning Rate: 0.000433
+============================================================
+
+✅ New best model! Val Loss: 2.4310
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.4310
+Epoch 13/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.502, class=4.013, bbox=0.113, giou=0.838, objectness=3.472]
+Epoch 13/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.4172] 
+
+============================================================
+Epoch 13/50 Summary
+============================================================
+Time: 411.2s
+Train Loss: 2.4515 | Val Loss: 2.4172
+Precision: 0.9152 | Recall: 0.2964 | F1: 0.4478
+TP: 712 | FP: 66 | FN: 1690
+Learning Rate: 0.000422
+============================================================
+
+✅ New best model! Val Loss: 2.4172
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.4172
+Epoch 14/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.388, class=3.666, bbox=0.097, giou=0.851, objectness=3.171]
+Epoch 14/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.4158] 
+
+============================================================
+Epoch 14/50 Summary
+============================================================
+Time: 411.1s
+Train Loss: 2.4330 | Val Loss: 2.4158
+Precision: 0.9119 | Recall: 0.3189 | F1: 0.4725
+TP: 766 | FP: 74 | FN: 1636
+Learning Rate: 0.000410
+============================================================
+
+✅ New best model! Val Loss: 2.4158
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.4158
+Epoch 15/50 [Train]: 100%|████████████████████| 420/420 [05:22<00:00,  1.30it/s, total=2.269, class=3.184, bbox=0.073, giou=0.862, objectness=2.863]
+Epoch 15/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.4224] 
+
+============================================================
+Epoch 15/50 Summary
+============================================================
+Time: 410.3s
+Train Loss: 2.4164 | Val Loss: 2.4224
+Precision: 0.9141 | Recall: 0.3189 | F1: 0.4728
+TP: 766 | FP: 72 | FN: 1636
+Learning Rate: 0.000398
+============================================================
+
+⚠️  No improvement. Patience: 1/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 16/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.420, class=3.761, bbox=0.113, giou=0.829, objectness=3.459]
+Epoch 16/50 [Val]: 100%|████████████████████| 61/61 [01:28<00:00,  1.45s/it, val_loss=2.3905] 
+
+============================================================
+Epoch 16/50 Summary
+============================================================
+Time: 411.7s
+Train Loss: 2.4187 | Val Loss: 2.3905
+Precision: 0.9520 | Recall: 0.3139 | F1: 0.4721
+TP: 754 | FP: 38 | FN: 1648
+Learning Rate: 0.000385
+============================================================
+
+✅ New best model! Val Loss: 2.3905
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.3905
+Epoch 17/50 [Train]: 100%|████████████████████| 420/420 [05:26<00:00,  1.29it/s, total=2.594, class=4.044, bbox=0.134, giou=0.835, objectness=3.532]
+Epoch 17/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.3884] 
+
+============================================================
+Epoch 17/50 Summary
+============================================================
+Time: 414.4s
+Train Loss: 2.4218 | Val Loss: 2.3884
+Precision: 0.9360 | Recall: 0.3286 | F1: 0.4865
+TP: 790 | FP: 54 | FN: 1614
+Learning Rate: 0.000372
+============================================================
+
+✅ New best model! Val Loss: 2.3884
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.3884
+Epoch 18/50 [Train]: 100%|████████████████████| 420/420 [05:22<00:00,  1.30it/s, total=2.354, class=3.148, bbox=0.093, giou=0.838, objectness=2.746]
+Epoch 18/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.3957] 
+
+============================================================
+Epoch 18/50 Summary
+============================================================
+Time: 410.0s
+Train Loss: 2.4176 | Val Loss: 2.3957
+Precision: 0.9866 | Recall: 0.3070 | F1: 0.4683
+TP: 738 | FP: 10 | FN: 1666
+Learning Rate: 0.000358
+============================================================
+
+⚠️  No improvement. Patience: 1/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 19/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.518, class=4.009, bbox=0.120, giou=0.853, objectness=3.436]
+Epoch 19/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.3971] 
+
+============================================================
+Epoch 19/50 Summary
+============================================================
+Time: 412.3s
+Train Loss: 2.4004 | Val Loss: 2.3971
+Precision: 0.9593 | Recall: 0.3139 | F1: 0.4730
+TP: 754 | FP: 32 | FN: 1648
+Learning Rate: 0.000344
+============================================================
+
+⚠️  No improvement. Patience: 2/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 20/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.511, class=4.004, bbox=0.133, giou=0.860, objectness=3.523]
+Epoch 20/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.3682] 
+
+============================================================
+Epoch 20/50 Summary
+============================================================
+Time: 411.8s
+Train Loss: 2.3858 | Val Loss: 2.3682
+Precision: 0.9256 | Recall: 0.3314 | F1: 0.4880
+TP: 796 | FP: 64 | FN: 1606
+Learning Rate: 0.000329
+============================================================
+
+✅ New best model! Val Loss: 2.3682
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.3682
+Epoch 21/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.512, class=3.323, bbox=0.119, giou=0.821, objectness=3.026]
+Epoch 21/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.3719] 
+
+============================================================
+Epoch 21/50 Summary
+============================================================
+Time: 411.1s
+Train Loss: 2.3798 | Val Loss: 2.3719
+Precision: 0.9243 | Recall: 0.3455 | F1: 0.5030
+TP: 830 | FP: 68 | FN: 1572
+Learning Rate: 0.000314
+============================================================
+
+⚠️  No improvement. Patience: 1/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 22/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.369, class=3.250, bbox=0.096, giou=0.853, objectness=3.016]
+Epoch 22/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.3836] 
+
+============================================================
+Epoch 22/50 Summary
+============================================================
+Time: 410.8s
+Train Loss: 2.3754 | Val Loss: 2.3836
+Precision: 0.9389 | Recall: 0.3580 | F1: 0.5184
+TP: 860 | FP: 56 | FN: 1542
+Learning Rate: 0.000299
+============================================================
+
+⚠️  No improvement. Patience: 2/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 23/50 [Train]: 100%|████████████████████| 420/420 [05:24<00:00,  1.30it/s, total=2.343, class=3.025, bbox=0.094, giou=0.839, objectness=2.693]
+Epoch 23/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.3465] 
+
+============================================================
+Epoch 23/50 Summary
+============================================================
+Time: 412.2s
+Train Loss: 2.3531 | Val Loss: 2.3465
+Precision: 0.9550 | Recall: 0.3530 | F1: 0.5155
+TP: 848 | FP: 40 | FN: 1554
+Learning Rate: 0.000284
+============================================================
+
+✅ New best model! Val Loss: 2.3465
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.3465
+Epoch 24/50 [Train]: 100%|████████████████████| 420/420 [05:24<00:00,  1.30it/s, total=2.222, class=3.708, bbox=0.056, giou=0.853, objectness=3.290]
+Epoch 24/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.3423] 
+
+============================================================
+Epoch 24/50 Summary
+============================================================
+Time: 412.0s
+Train Loss: 2.3595 | Val Loss: 2.3423
+Precision: 0.9543 | Recall: 0.3655 | F1: 0.5286
+TP: 878 | FP: 42 | FN: 1524
+Learning Rate: 0.000268
+============================================================
+
+✅ New best model! Val Loss: 2.3423
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.3423
+Epoch 25/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.301, class=3.204, bbox=0.083, giou=0.831, objectness=3.013]
+Epoch 25/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.3365] 
+
+============================================================
+Epoch 25/50 Summary
+============================================================
+Time: 411.4s
+Train Loss: 2.3310 | Val Loss: 2.3365
+Precision: 0.9352 | Recall: 0.3605 | F1: 0.5204
+TP: 866 | FP: 60 | FN: 1536
+Learning Rate: 0.000252
+============================================================
+
+✅ New best model! Val Loss: 2.3365
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.3365
+Epoch 26/50 [Train]: 100%|████████████████████| 420/420 [05:26<00:00,  1.29it/s, total=2.277, class=3.352, bbox=0.083, giou=0.852, objectness=3.039]
+Epoch 26/50 [Val]: 100%|████████████████████| 61/61 [01:28<00:00,  1.46s/it, val_loss=2.3427] 
+
+============================================================
+Epoch 26/50 Summary
+============================================================
+Time: 415.3s
+Train Loss: 2.3245 | Val Loss: 2.3427
+Precision: 0.9670 | Recall: 0.3664 | F1: 0.5314
+TP: 880 | FP: 30 | FN: 1522
+Learning Rate: 0.000237
+============================================================
+
+⚠️  No improvement. Patience: 1/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 27/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.459, class=4.043, bbox=0.118, giou=0.864, objectness=3.545]
+Epoch 27/50 [Val]: 100%|████████████████████| 61/61 [01:28<00:00,  1.44s/it, val_loss=2.3476] 
+
+============================================================
+Epoch 27/50 Summary
+============================================================
+Time: 411.9s
+Train Loss: 2.3118 | Val Loss: 2.3476
+Precision: 0.9287 | Recall: 0.3797 | F1: 0.5390
+TP: 912 | FP: 70 | FN: 1490
+Learning Rate: 0.000221
+============================================================
+
+⚠️  No improvement. Patience: 2/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 28/50 [Train]: 100%|████████████████████| 420/420 [05:24<00:00,  1.30it/s, total=2.388, class=3.158, bbox=0.118, giou=0.877, objectness=2.828]
+Epoch 28/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.3037] 
+
+============================================================
+Epoch 28/50 Summary
+============================================================
+Time: 412.1s
+Train Loss: 2.3047 | Val Loss: 2.3037
+Precision: 0.9517 | Recall: 0.3935 | F1: 0.5568
+TP: 946 | FP: 48 | FN: 1458
+Learning Rate: 0.000206
+============================================================
+
+✅ New best model! Val Loss: 2.3037
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.3037
+Epoch 29/50 [Train]: 100%|████████████████████| 420/420 [05:24<00:00,  1.30it/s, total=2.323, class=3.122, bbox=0.086, giou=0.839, objectness=2.749]
+Epoch 29/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.3032] 
+
+============================================================
+Epoch 29/50 Summary
+============================================================
+Time: 412.2s
+Train Loss: 2.2913 | Val Loss: 2.3032
+Precision: 0.9647 | Recall: 0.3869 | F1: 0.5523
+TP: 930 | FP: 34 | FN: 1474
+Learning Rate: 0.000191
+============================================================
+
+✅ New best model! Val Loss: 2.3032
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.3032
+Epoch 30/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.191, class=3.070, bbox=0.054, giou=0.874, objectness=2.857]
+Epoch 30/50 [Val]: 100%|████████████████████| 61/61 [01:28<00:00,  1.44s/it, val_loss=2.2955] 
+
+============================================================
+Epoch 30/50 Summary
+============================================================
+Time: 411.3s
+Train Loss: 2.2794 | Val Loss: 2.2955
+Precision: 0.9440 | Recall: 0.4068 | F1: 0.5686
+TP: 978 | FP: 58 | FN: 1426
+Learning Rate: 0.000176
+============================================================
+
+✅ New best model! Val Loss: 2.2955
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2955
+Epoch 31/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.240, class=3.008, bbox=0.070, giou=0.848, objectness=2.704]
+Epoch 31/50 [Val]: 100%|████████████████████| 61/61 [01:27<00:00,  1.44s/it, val_loss=2.2930] 
+
+============================================================
+Epoch 31/50 Summary
+============================================================
+Time: 412.0s
+Train Loss: 2.2739 | Val Loss: 2.2930
+Precision: 0.9476 | Recall: 0.4060 | F1: 0.5684
+TP: 976 | FP: 54 | FN: 1428
+Learning Rate: 0.000161
+============================================================
+
+✅ New best model! Val Loss: 2.2930
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2930
+Epoch 32/50 [Train]: 100%|████████████████████| 420/420 [05:22<00:00,  1.30it/s, total=2.259, class=2.825, bbox=0.078, giou=0.840, objectness=2.562]
+Epoch 32/50 [Val]: 100%|████████████████████| 61/61 [01:29<00:00,  1.47s/it, val_loss=2.2788] 
+
+============================================================
+Epoch 32/50 Summary
+============================================================
+Time: 412.9s
+Train Loss: 2.2652 | Val Loss: 2.2788
+Precision: 0.9540 | Recall: 0.4143 | F1: 0.5777
+TP: 996 | FP: 48 | FN: 1408
+Learning Rate: 0.000147
+============================================================
+
+✅ New best model! Val Loss: 2.2788
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2788
+Epoch 33/50 [Train]: 100%|████████████████████| 420/420 [05:27<00:00,  1.28it/s, total=2.194, class=2.971, bbox=0.058, giou=0.858, objectness=2.679]
+Epoch 33/50 [Val]: 100%|████████████████████| 61/61 [01:28<00:00,  1.45s/it, val_loss=2.2779] 
+
+============================================================
+Epoch 33/50 Summary
+============================================================
+Time: 415.6s
+Train Loss: 2.2518 | Val Loss: 2.2779
+Precision: 0.9514 | Recall: 0.4068 | F1: 0.5699
+TP: 978 | FP: 50 | FN: 1426
+Learning Rate: 0.000133
+============================================================
+
+✅ New best model! Val Loss: 2.2779
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2779
+Epoch 34/50 [Train]: 100%|████████████████████| 420/420 [05:25<00:00,  1.29it/s, total=2.266, class=2.878, bbox=0.083, giou=0.832, objectness=2.456]
+Epoch 34/50 [Val]: 100%|████████████████████| 61/61 [01:28<00:00,  1.45s/it, val_loss=2.2793] 
+
+============================================================
+Epoch 34/50 Summary
+============================================================
+Time: 413.4s
+Train Loss: 2.2470 | Val Loss: 2.2793
+Precision: 0.9505 | Recall: 0.4151 | F1: 0.5779
+TP: 998 | FP: 52 | FN: 1406
+Learning Rate: 0.000120
+============================================================
+
+⚠️  No improvement. Patience: 1/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 35/50 [Train]: 100%|████████████████████| 420/420 [05:25<00:00,  1.29it/s, total=2.296, class=2.995, bbox=0.095, giou=0.826, objectness=2.593]
+Epoch 35/50 [Val]: 100%|████████████████████| 61/61 [01:28<00:00,  1.44s/it, val_loss=2.2630] 
+
+============================================================
+Epoch 35/50 Summary
+============================================================
+Time: 413.5s
+Train Loss: 2.2385 | Val Loss: 2.2630
+Precision: 0.9368 | Recall: 0.4193 | F1: 0.5793
+TP: 1008 | FP: 68 | FN: 1396
+Learning Rate: 0.000107
+============================================================
+
+✅ New best model! Val Loss: 2.2630
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2630
+Epoch 36/50 [Train]: 100%|████████████████████| 420/420 [05:23<00:00,  1.30it/s, total=2.318, class=3.051, bbox=0.077, giou=0.827, objectness=2.800]
+Epoch 36/50 [Val]: 100%|████████████████████| 61/61 [01:29<00:00,  1.47s/it, val_loss=2.2541] 
+
+============================================================
+Epoch 36/50 Summary
+============================================================
+Time: 412.9s
+Train Loss: 2.2288 | Val Loss: 2.2541
+Precision: 0.9446 | Recall: 0.4260 | F1: 0.5872
+TP: 1024 | FP: 60 | FN: 1380
+Learning Rate: 0.000095
+============================================================
+
+✅ New best model! Val Loss: 2.2541
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2541
+Epoch 37/50 [Train]: 100%|████████████████████| 420/420 [05:25<00:00,  1.29it/s, total=2.188, class=2.959, bbox=0.061, giou=0.839, objectness=2.563]
+Epoch 37/50 [Val]: 100%|████████████████████| 61/61 [01:28<00:00,  1.45s/it, val_loss=2.2529] 
+
+============================================================
+Epoch 37/50 Summary
+============================================================
+Time: 414.0s
+Train Loss: 2.2221 | Val Loss: 2.2529
+Precision: 0.9343 | Recall: 0.4260 | F1: 0.5851
+TP: 1024 | FP: 72 | FN: 1380
+Learning Rate: 0.000083
+============================================================
+
+✅ New best model! Val Loss: 2.2529
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2529
+Epoch 38/50 [Train]: 100%|████████████████████| 420/420 [05:24<00:00,  1.29it/s, total=2.266, class=2.775, bbox=0.080, giou=0.812, objectness=2.491]
+Epoch 38/50 [Val]: 100%|████████████████████| 61/61 [01:29<00:00,  1.46s/it, val_loss=2.2556] 
+
+============================================================
+Epoch 38/50 Summary
+============================================================
+Time: 414.2s
+Train Loss: 2.2169 | Val Loss: 2.2556
+Precision: 0.9480 | Recall: 0.4243 | F1: 0.5862
+TP: 1020 | FP: 56 | FN: 1384
+Learning Rate: 0.000072
+============================================================
+
+⚠️  No improvement. Patience: 1/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 39/50 [Train]: 100%|████████████████████| 420/420 [05:36<00:00,  1.25it/s, total=2.136, class=2.603, bbox=0.051, giou=0.865, objectness=2.446]
+Epoch 39/50 [Val]: 100%|████████████████████| 61/61 [01:31<00:00,  1.50s/it, val_loss=2.2468] 
+
+============================================================
+Epoch 39/50 Summary
+============================================================
+Time: 428.3s
+Train Loss: 2.2082 | Val Loss: 2.2468
+Precision: 0.9259 | Recall: 0.4270 | F1: 0.5845
+TP: 1024 | FP: 82 | FN: 1374
+Learning Rate: 0.000062
+============================================================
+
+✅ New best model! Val Loss: 2.2468
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2468
+Epoch 40/50 [Train]: 100%|████████████████████| 420/420 [05:26<00:00,  1.29it/s, total=2.186, class=2.659, bbox=0.064, giou=0.856, objectness=2.499]
+Epoch 40/50 [Val]: 100%|████████████████████| 61/61 [01:28<00:00,  1.45s/it, val_loss=2.2391] 
+
+============================================================
+Epoch 40/50 Summary
+============================================================
+Time: 415.3s
+Train Loss: 2.2040 | Val Loss: 2.2391
+Precision: 0.9314 | Recall: 0.4304 | F1: 0.5887
+TP: 1032 | FP: 76 | FN: 1366
+Learning Rate: 0.000052
+============================================================
+
+✅ New best model! Val Loss: 2.2391
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2391
+Epoch 41/50 [Train]: 100%|████████████████████| 420/420 [05:34<00:00,  1.26it/s, total=2.145, class=2.266, bbox=0.052, giou=0.870, objectness=1.958]
+Epoch 41/50 [Val]: 100%|████████████████████| 61/61 [01:43<00:00,  1.70s/it, val_loss=2.2440] 
+
+============================================================
+Epoch 41/50 Summary
+============================================================
+Time: 437.9s
+Train Loss: 2.1970 | Val Loss: 2.2440
+Precision: 0.9258 | Recall: 0.4370 | F1: 0.5938
+TP: 1048 | FP: 84 | FN: 1350
+Learning Rate: 0.000044
+============================================================
+
+⚠️  No improvement. Patience: 1/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+Epoch 42/50 [Train]: 100%|████████████████████| 420/420 [06:13<00:00,  1.13it/s, total=2.129, class=2.556, bbox=0.049, giou=0.849, objectness=2.391]
+Epoch 42/50 [Val]: 100%|████████████████████| 61/61 [01:37<00:00,  1.60s/it, val_loss=2.2336] 
+
+============================================================
+Epoch 42/50 Summary
+============================================================
+Time: 471.1s
+Train Loss: 2.1898 | Val Loss: 2.2336
+Precision: 0.9129 | Recall: 0.4564 | F1: 0.6086
+TP: 1090 | FP: 104 | FN: 1298
+Learning Rate: 0.000036
+============================================================
+
+✅ New best model! Val Loss: 2.2336
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2336
+Epoch 43/50 [Train]: 100%|████████████████████| 420/420 [05:30<00:00,  1.27it/s, total=2.129, class=2.193, bbox=0.061, giou=0.843, objectness=1.893]
+Epoch 43/50 [Val]: 100%|████████████████████| 61/61 [01:30<00:00,  1.49s/it, val_loss=2.2268] 
+
+============================================================
+Epoch 43/50 Summary
+============================================================
+Time: 421.1s
+Train Loss: 2.1825 | Val Loss: 2.2268
+Precision: 0.8647 | Recall: 0.5119 | F1: 0.6431
+TP: 1202 | FP: 188 | FN: 1146
+Learning Rate: 0.000029
+============================================================
+
+✅ New best model! Val Loss: 2.2268
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2268
+Epoch 44/50 [Train]: 100%|████████████████████| 420/420 [05:30<00:00,  1.27it/s, total=2.228, class=2.759, bbox=0.073, giou=0.859, objectness=2.217]
+Epoch 44/50 [Val]: 100%|████████████████████| 61/61 [01:29<00:00,  1.47s/it, val_loss=2.2220] 
+
+============================================================
+Epoch 44/50 Summary
+============================================================
+Time: 419.8s
+Train Loss: 2.1744 | Val Loss: 2.2220
+Precision: 0.8211 | Recall: 0.5395 | F1: 0.6511
+TP: 1258 | FP: 274 | FN: 1074
+Learning Rate: 0.000022
+============================================================
+
+✅ New best model! Val Loss: 2.2220
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2220
+Epoch 45/50 [Train]: 100%|████████████████████| 420/420 [05:32<00:00,  1.26it/s, total=2.122, class=1.651, bbox=0.064, giou=0.855, objectness=1.397]
+Epoch 45/50 [Val]: 100%|████████████████████| 61/61 [01:30<00:00,  1.48s/it, val_loss=2.2134] 
+
+============================================================
+Epoch 45/50 Summary
+============================================================
+Time: 423.3s
+Train Loss: 2.1682 | Val Loss: 2.2134
+Precision: 0.8036 | Recall: 0.5775 | F1: 0.6721
+TP: 1326 | FP: 324 | FN: 970
+Learning Rate: 0.000017
+============================================================
+
+✅ New best model! Val Loss: 2.2134
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2134
+Epoch 46/50 [Train]: 100%|████████████████████| 420/420 [05:32<00:00,  1.26it/s, total=2.128, class=2.664, bbox=0.061, giou=0.817, objectness=2.364]
+Epoch 46/50 [Val]: 100%|████████████████████| 61/61 [01:30<00:00,  1.48s/it, val_loss=2.2080] 
+
+============================================================
+Epoch 46/50 Summary
+============================================================
+Time: 422.9s
+Train Loss: 2.1621 | Val Loss: 2.2080
+Precision: 0.8038 | Recall: 0.5889 | F1: 0.6797
+TP: 1352 | FP: 330 | FN: 944
+Learning Rate: 0.000013
+============================================================
+
+✅ New best model! Val Loss: 2.2080
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2080
+Epoch 47/50 [Train]: 100%|████████████████████| 420/420 [05:32<00:00,  1.26it/s, total=2.150, class=1.734, bbox=0.059, giou=0.866, objectness=1.586]
+Epoch 47/50 [Val]: 100%|████████████████████| 61/61 [01:30<00:00,  1.49s/it, val_loss=2.2040] 
+
+============================================================
+Epoch 47/50 Summary
+============================================================
+Time: 423.9s
+Train Loss: 2.1578 | Val Loss: 2.2040
+Precision: 0.8081 | Recall: 0.5967 | F1: 0.6865
+TP: 1364 | FP: 324 | FN: 922
+Learning Rate: 0.000009
+============================================================
+
+✅ New best model! Val Loss: 2.2040
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2040
+Epoch 48/50 [Train]: 100%|████████████████████| 420/420 [05:33<00:00,  1.26it/s, total=2.177, class=1.633, bbox=0.068, giou=0.858, objectness=1.374]
+Epoch 48/50 [Val]: 100%|████████████████████| 61/61 [01:30<00:00,  1.48s/it, val_loss=2.2034] 
+
+============================================================
+Epoch 48/50 Summary
+============================================================
+Time: 424.6s
+Train Loss: 2.1555 | Val Loss: 2.2034
+Precision: 0.7984 | Recall: 0.6044 | F1: 0.6880
+TP: 1378 | FP: 348 | FN: 902
+Learning Rate: 0.000007
+============================================================
+
+✅ New best model! Val Loss: 2.2034
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2034
+Epoch 49/50 [Train]: 100%|████████████████████| 420/420 [05:34<00:00,  1.26it/s, total=2.215, class=2.401, bbox=0.074, giou=0.838, objectness=2.099]
+Epoch 49/50 [Val]: 100%|████████████████████| 61/61 [01:30<00:00,  1.48s/it, val_loss=2.2018] 
+
+============================================================
+Epoch 49/50 Summary
+============================================================
+Time: 425.3s
+Train Loss: 2.1479 | Val Loss: 2.2018
+Precision: 0.7866 | Recall: 0.6100 | F1: 0.6872
+TP: 1386 | FP: 376 | FN: 886
+Learning Rate: 0.000005
+============================================================
+
+✅ New best model! Val Loss: 2.2018
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+✓ Best model saved with val_loss: 2.2018
+Epoch 50/50 [Train]: 100%|████████████████████| 420/420 [05:34<00:00,  1.25it/s, total=2.135, class=2.009, bbox=0.061, giou=0.849, objectness=1.809]
+Epoch 50/50 [Val]: 100%|████████████████████| 61/61 [01:32<00:00,  1.52s/it, val_loss=2.2023] 
+
+============================================================
+Epoch 50/50 Summary
+============================================================
+Time: 427.4s
+Train Loss: 2.1475 | Val Loss: 2.2023
+Precision: 0.7861 | Recall: 0.6201 | F1: 0.6933
+TP: 1404 | FP: 382 | FN: 860
+Learning Rate: 0.000005
+============================================================
+
+⚠️  No improvement. Patience: 1/10
+✓ Checkpoint saved to checkpoints\last_checkpoint.pth
+
+============================================================
+Training Complete!
+============================================================
+Best validation loss: 2.2018
+Total epochs: 50
+Checkpoints and visualizations saved to: checkpoints
+============================================================

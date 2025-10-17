@@ -2,6 +2,7 @@
 Dataset module for YOLO format object detection data
 """
 import cv2
+import json
 import torch
 import numpy as np
 from PIL import Image
@@ -9,7 +10,9 @@ from tqdm import tqdm
 from pathlib import Path
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
+
+weights_file = Path('dataset/sample_weights.json')
 
 class YOLODetectionDataset(Dataset):
     def __init__(self, images_dir, labels_dir, img_size=518, augment=False, num_classes=None):
@@ -153,7 +156,29 @@ def create_dataloaders(train_img_dir, train_label_dir, val_img_dir, val_label_di
     train_ds = YOLODetectionDataset(train_img_dir, train_label_dir, img_size, True, num_classes)
     val_ds = YOLODetectionDataset(val_img_dir, val_label_dir, img_size, False, train_ds.num_classes)
     
-    train_loader = DataLoader(train_ds, batch_size, True, num_workers=num_workers, collate_fn=collate_fn, pin_memory=True, persistent_workers=num_workers > 0, drop_last=True)
+    if weights_file.exists():
+        with open(weights_file, 'r') as f:
+            weights_data = json.load(f)
+        sample_weights = weights_data['sample_weights']
+
+        sampler = WeightedRandomSampler(
+            weights=sample_weights,
+            num_samples=len(sample_weights),
+            replacement=True
+        )
+
+        train_loader = DataLoader(
+            train_ds, batch_size, 
+            sampler=sampler,
+            num_workers=num_workers, 
+            collate_fn=collate_fn, 
+            pin_memory=True, 
+            persistent_workers=num_workers > 0, 
+            drop_last=True
+        )
+    else:
+        train_loader = DataLoader(train_ds, batch_size, True, num_workers=num_workers, collate_fn=collate_fn, pin_memory=True, persistent_workers=num_workers > 0, drop_last=True)
+    
     val_loader = DataLoader(val_ds, batch_size*2, False, num_workers=num_workers, collate_fn=collate_fn, pin_memory=True, persistent_workers=num_workers > 0)
     
     print(f"\n--- Dataset Stats ---\nTrain: {len(train_ds)} | Val: {len(val_ds)} | Classes: {train_ds.num_classes}\n---------------------\n")
