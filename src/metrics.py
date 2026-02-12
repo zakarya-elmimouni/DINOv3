@@ -163,7 +163,7 @@ class DetectionMetrics:
         cm = self.get_confusion_matrix()
         
         plt.figure(figsize=(10, 8))
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+        sns.heatmap(cm, annot=True, fmt='2f', cmap='Blues', # fmt='d' for integer counts, '2f' for normalized
                    xticklabels=self.class_names,
                    yticklabels=self.class_names)
         plt.title('Confusion Matrix')

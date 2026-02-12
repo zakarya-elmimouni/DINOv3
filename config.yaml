@@ -7,12 +7,12 @@ model:
   backbone: 'dinov3_vitl16'
   
   # Leave empty to train from scratch, or provide path to .pth file
-  backbone_weights_path: 'weights/dinov3-vitl16-pretrain-lvd1689m.pth'
+  backbone_weights_path: 'dinov3_vitl16_pretrain_sat493m-eadcf0ff.pth'
   
   freeze_backbone: False  # Train the backbone from scratch
   adapter_dim: 256
   num_queries: 100
-  img_size: 518 # Should match the img_size in the dataset section
+  img_size: 500 # Should match the img_size in the dataset section
 
 # -------------------
 # Dataset Paths
@@ -27,16 +27,16 @@ dataset:
 # Optimizer & Scheduler
 # ----------------------
 optimizer:
-  epochs: 50
-  batch_size: 8  # Increased since smaller model uses less memory
-  learning_rate: 0.0005  # Lower LR for training the adapter on frozen backbone
+  epochs: 30
+  batch_size: 16  # Increased since smaller model uses less memory
+  learning_rate: 0.0001  # Lower LR for training the adapter on frozen backbone
   weight_decay: 0.0001
 
 # -------------------
 # Loss Weights
 # -------------------
 loss_weights:
-  class: 10.0   # Reduced to encourage more predictions
+  class: 5.0   # Reduced to encourage more predictions
   bbox: 5.0    # Keep high - localization is important
   giou: 2.0    # Keep same - shape matters
   obj: 2.0     # INCREASED - penalize not predicting objects!
