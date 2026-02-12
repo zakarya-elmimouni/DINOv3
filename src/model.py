@@ -162,7 +162,7 @@ class DINOv3Detector(nn.Module):
         return boxes_xyxy, classes, objectness
 
     @torch.no_grad()
-    def get_predictions(self, images, conf_threshold=0.5, nms_threshold=0.5):
+    def get_predictions(self, images, conf_threshold=0.1, nms_threshold=0.5):
         self.eval()
         boxes_norm, class_logits, objectness_logits = self.forward(images)
         results = []

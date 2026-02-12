@@ -13,7 +13,7 @@ from tqdm import tqdm
 from .model import create_model
 
 class Inferencer:
-    def __init__(self, checkpoint_path, device='cuda', img_size=518):
+    def __init__(self, checkpoint_path, device='cuda', img_size=500):
         self.device = torch.device(device if torch.cuda.is_available() else 'cpu')
         self.img_size = img_size
         

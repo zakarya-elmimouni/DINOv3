@@ -11,7 +11,7 @@ model:
   
   freeze_backbone: False  # Train the backbone from scratch
   adapter_dim: 256
-  num_queries: 100
+  num_queries: 50
   img_size: 500 # Should match the img_size in the dataset section
 
 # -------------------
@@ -29,7 +29,7 @@ dataset:
 optimizer:
   epochs: 30
   batch_size: 16  # Increased since smaller model uses less memory
-  learning_rate: 0.0001  # Lower LR for training the adapter on frozen backbone
+  learning_rate: 0.001  # Lower LR for training the adapter on frozen backbone
   weight_decay: 0.0001
 
 # -------------------
