@@ -51,10 +51,25 @@ class Trainer:
         self.criterion = DetectionLoss(num_classes=self.num_classes, loss_weights=config['loss_weights'], class_weights=class_weights)
         
         trainable_params = [p for p in self.model.parameters() if p.requires_grad]
-        self.optimizer = AdamW(
-            trainable_params, lr=config['optimizer']['learning_rate'], 
-            weight_decay=config['optimizer']['weight_decay']
-        )
+        # self.optimizer = AdamW(
+        #     trainable_params, lr=config['optimizer']['learning_rate'], 
+        #     weight_decay=config['optimizer']['weight_decay']
+        # )
+        backbone_params = []
+        head_params = []
+
+        for name, param in self.model.named_parameters():
+            if not param.requires_grad:
+                continue
+            if "backbone" in name:
+                backbone_params.append(param)
+            else:
+                head_params.append(param)
+
+        self.optimizer = AdamW([
+            {"params": backbone_params, "lr": config['optimizer']['learning_rate'] * 0.1},
+            {"params": head_params, "lr": config['optimizer']['learning_rate']}
+        ], weight_decay=config['optimizer']['weight_decay'])
         
         self.scheduler = CosineAnnealingLR(
             self.optimizer, T_max=config['optimizer']['epochs'], 

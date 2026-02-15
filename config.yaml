@@ -44,7 +44,7 @@ loss_weights:
 # -------------------
 # General Settings
 # -------------------
-checkpoint_dir: 'checkpoints'
+checkpoint_dir: 'checkpoints_finetuning_block10_11&head'
 num_workers: 0 # Number of CPU cores for data loading. Set to 0 if you have memory issues on Windows.
 use_amp: True # Use Automatic Mixed Precision (recommended for modern GPUs)
 patience: 10  # Early stopping patience (number of epochs without improvement)

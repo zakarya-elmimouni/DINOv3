@@ -137,9 +137,25 @@ class DINOv3Detector(nn.Module):
             print("Warning: No local weights path provided, using randomly initialized backbone.")
 
         if freeze_backbone:
-            for param in self.backbone.parameters(): param.requires_grad = False
+            for param in self.backbone.parameters():
+                param.requires_grad = False
             self.backbone.eval()
-            print("✓ Backbone is frozen.")
+            print("✓ Backbone fully frozen.")
+
+        else:
+            print("✓ Fine-tuning last ViT blocks only.")
+
+            # Freeze everything first
+            for param in self.backbone.parameters():
+                param.requires_grad = False
+
+            # Unfreeze last transformer blocks
+            for name, param in self.backbone.named_parameters():
+                if "blocks.10" in name or "blocks.11" in name:
+                    param.requires_grad = True
+
+            self.backbone.train()
+
         
         self.adapter = SpatialTuningAdapter(self.backbone.embed_dim, adapter_dim)
         self.detection_head = SimpleDetectionHead(adapter_dim, num_classes, num_queries)
@@ -151,8 +167,14 @@ class DINOv3Detector(nn.Module):
         print(f"\n--- Model Params ---\nTotal: {total:,} | Trainable: {trainable:,} ({100*trainable/total:.2f}%)\n--------------------\n")
 
     def forward(self, images):
-        with torch.no_grad():
+        # with torch.no_grad():
+        #     patch_features = self.backbone.forward_features(images)['x_norm_patchtokens']
+        if any(p.requires_grad for p in self.backbone.parameters()):
             patch_features = self.backbone.forward_features(images)['x_norm_patchtokens']
+        else:
+            with torch.no_grad():
+                patch_features = self.backbone.forward_features(images)['x_norm_patchtokens']
+
         
         adapted = self.adapter(patch_features)
         boxes_cxcywh, classes, objectness = self.detection_head(adapted)
