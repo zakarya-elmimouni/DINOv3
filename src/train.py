@@ -122,8 +122,11 @@ class Trainer:
             gt_labels = [l.to(self.device) for l in labels_list]
             
             with autocast('cuda', enabled=self.config['use_amp']):
-                pred_boxes, pred_classes, pred_objectness = self.model(images)
-                loss_dict = self.criterion(pred_boxes, pred_classes, pred_objectness, gt_boxes_normalized, gt_labels)
+                # pred_boxes, pred_classes, pred_objectness = self.model(images)
+                # loss_dict = self.criterion(pred_boxes, pred_classes, pred_objectness, gt_boxes_normalized, gt_labels)
+                pred_boxes, pred_classes = self.model(images)
+                loss_dict = self.criterion(pred_boxes, pred_classes, gt_boxes_normalized, gt_labels)
+
                 loss = loss_dict['total']
             
             self.optimizer.zero_grad()

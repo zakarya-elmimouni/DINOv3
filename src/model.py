@@ -205,7 +205,12 @@ class DINOv3Detector(nn.Module):
 
         
         self.adapter = SpatialTuningAdapter(self.backbone.embed_dim, adapter_dim)
-        self.detection_head = SimpleDetectionHead(adapter_dim, num_classes, num_queries)
+        # self.detection_head = SimpleDetectionHead(adapter_dim, num_classes, num_queries)
+        self.detection_head = DETRDecoderHead(
+            hidden_dim=adapter_dim,
+            num_classes=num_classes,
+            num_queries=num_queries,
+            num_layers=6)
         self._print_params()
 
     def _print_params(self):
@@ -224,21 +229,27 @@ class DINOv3Detector(nn.Module):
 
         
         adapted = self.adapter(patch_features)
-        boxes_cxcywh, classes, objectness = self.detection_head(adapted)
+        # boxes_cxcywh, classes, objectness = self.detection_head(adapted)
+        boxes_cxcywh, classes = self.detection_head(adapted)
+
         
         x_c, y_c, w, h = boxes_cxcywh.unbind(-1)
         boxes_xyxy = torch.stack([(x_c-w/2), (y_c-h/2), (x_c+w/2), (y_c+h/2)], dim=-1)
-        return boxes_xyxy, classes, objectness
+        # return boxes_xyxy, classes, objectness
+        return boxes_xyxy, classes
 
     @torch.no_grad()
     def get_predictions(self, images, conf_threshold=0.1, nms_threshold=0.5):
         self.eval()
-        boxes_norm, class_logits, objectness_logits = self.forward(images)
+        # boxes_norm, class_logits, objectness_logits = self.forward(images)
+        boxes_norm, class_logits = self.forward(images)
         results = []
         for i in range(images.shape[0]):
-            scores = torch.sigmoid(objectness_logits[i].squeeze(-1)) * torch.softmax(class_logits[i], -1)[:, :-1].max(-1).values
+            # scores = torch.sigmoid(objectness_logits[i].squeeze(-1)) * torch.softmax(class_logits[i], -1)[:, :-1].max(-1).values
+            prob = torch.nn.functional.softmax(class_logits[i], dim=-1)
+            scores, labels = prob[..., :-1].max(-1)
             keep = scores > conf_threshold
-            boxes, labels, scores = boxes_norm[i, keep], class_logits[i, keep].argmax(-1), scores[keep]
+            boxes, labels, scores = boxes_norm[i, keep], labels[keep], scores[keep]
             
             if boxes.shape[0] > 0:
                 h, w = images.shape[-2:]

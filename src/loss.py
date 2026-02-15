@@ -59,73 +59,165 @@ class HungarianMatcher(nn.Module):
         pred_idx, gt_idx = linear_sum_assignment(C)
         return list(zip(pred_idx, gt_idx))
 
+# class DetectionLoss(nn.Module):
+#     def __init__(self, num_classes, matcher=None, loss_weights=None, class_weights=None):
+#         super().__init__()
+#         self.num_classes = num_classes
+#         self.matcher = matcher or HungarianMatcher()
+#         self.loss_weights = loss_weights or {'class': 2.0, 'bbox': 5.0, 'giou': 2.0, 'obj': 1.0}
+#         if class_weights is None:
+#             self.class_weights = torch.ones(num_classes + 1)
+#         else:
+#             self.class_weights = torch.tensor(class_weights, dtype=torch.float32)
+        
+#     def forward(self, pred_boxes_xyxy, pred_classes, pred_objectness, gt_boxes_list, gt_labels_list):
+#         batch_size, device = pred_boxes_xyxy.shape[0], pred_boxes_xyxy.device
+        
+#         total_loss = 0
+#         loss_dict = {'total': 0, 'class': 0, 'bbox': 0, 'giou': 0, 'objectness': 0}
+#         num_total_gt = 0
+
+#         for i in range(batch_size):
+#             pred_b, pred_c, pred_o = pred_boxes_xyxy[i], pred_classes[i], pred_objectness[i].squeeze(-1)
+#             gt_b, gt_l = gt_boxes_list[i].to(device), gt_labels_list[i].to(device)
+#             num_gt = gt_b.shape[0]
+#             num_total_gt += num_gt
+            
+#             # Match predictions to ground truth
+#             matches = self.matcher(pred_b, pred_c, gt_b, gt_l)
+            
+#             # --- Objectness Loss ---
+#             obj_targets = torch.zeros_like(pred_o)
+#             if matches:
+#                 pred_idx = torch.tensor([m[0] for m in matches], device=device)
+#                 obj_targets[pred_idx] = 1.0
+#             total_loss += self.loss_weights['obj'] * F.binary_cross_entropy_with_logits(pred_o, obj_targets)
+#             loss_dict['objectness'] += F.binary_cross_entropy_with_logits(pred_o, obj_targets, reduction='sum')
+
+#             # --- Classification and Box Losses (only for matched pairs) ---
+#             if not matches:
+#                 continue
+
+#             pred_idx, gt_idx = zip(*matches)
+#             pred_idx = torch.tensor(pred_idx, device=device)
+#             gt_idx = torch.tensor(gt_idx, device=device)
+
+#             # Class loss
+#             cls_targets = torch.full((pred_c.shape[0],), self.num_classes, dtype=torch.long, device=device)
+#             cls_targets[pred_idx] = gt_l[gt_idx]
+#             cls_weights = self.class_weights.to(device)
+#             total_loss += self.loss_weights['class'] * F.cross_entropy(
+#                 pred_c, cls_targets, weight=cls_weights, reduction='mean'
+#             )
+#             loss_dict['class'] += F.cross_entropy(pred_c, cls_targets, reduction='sum')
+            
+#             # Box losses
+#             matched_pred_boxes = pred_b[pred_idx]
+#             matched_gt_boxes = gt_b[gt_idx]
+            
+#             bbox_loss = F.l1_loss(matched_pred_boxes, matched_gt_boxes, reduction='sum')
+#             total_loss += self.loss_weights['bbox'] * bbox_loss / num_gt
+#             loss_dict['bbox'] += bbox_loss
+
+#             giou_loss = (1 - torch.diag(generalized_box_iou(matched_pred_boxes, matched_gt_boxes))).sum()
+#             total_loss += self.loss_weights['giou'] * giou_loss / num_gt
+#             loss_dict['giou'] += giou_loss
+
+#         # Normalize losses
+#         if num_total_gt > 0:
+#             for k in ['class', 'bbox', 'giou', 'objectness']:
+#                 loss_dict[k] /= num_total_gt
+#         loss_dict['total'] = total_loss / batch_size
+#         return loss_dict
+
 class DetectionLoss(nn.Module):
     def __init__(self, num_classes, matcher=None, loss_weights=None, class_weights=None):
         super().__init__()
         self.num_classes = num_classes
         self.matcher = matcher or HungarianMatcher()
-        self.loss_weights = loss_weights or {'class': 2.0, 'bbox': 5.0, 'giou': 2.0, 'obj': 1.0}
+
+        self.loss_weights = loss_weights or {
+            'class': 2.0,
+            'bbox': 5.0,
+            'giou': 2.0
+        }
+
         if class_weights is None:
             self.class_weights = torch.ones(num_classes + 1)
         else:
             self.class_weights = torch.tensor(class_weights, dtype=torch.float32)
-        
-    def forward(self, pred_boxes_xyxy, pred_classes, pred_objectness, gt_boxes_list, gt_labels_list):
-        batch_size, device = pred_boxes_xyxy.shape[0], pred_boxes_xyxy.device
-        
+
+    def forward(self, pred_boxes, pred_classes, gt_boxes_list, gt_labels_list):
+
+        batch_size = pred_boxes.shape[0]
+        device = pred_boxes.device
+
         total_loss = 0
-        loss_dict = {'total': 0, 'class': 0, 'bbox': 0, 'giou': 0, 'objectness': 0}
+        loss_dict = {'total': 0, 'class': 0, 'bbox': 0, 'giou': 0}
         num_total_gt = 0
 
         for i in range(batch_size):
-            pred_b, pred_c, pred_o = pred_boxes_xyxy[i], pred_classes[i], pred_objectness[i].squeeze(-1)
-            gt_b, gt_l = gt_boxes_list[i].to(device), gt_labels_list[i].to(device)
+
+            pred_b = pred_boxes[i]          # [num_queries, 4]
+            pred_c = pred_classes[i]        # [num_queries, num_classes+1]
+
+            gt_b = gt_boxes_list[i].to(device)
+            gt_l = gt_labels_list[i].to(device)
+
             num_gt = gt_b.shape[0]
             num_total_gt += num_gt
-            
-            # Match predictions to ground truth
+
+            # Hungarian matching
             matches = self.matcher(pred_b, pred_c, gt_b, gt_l)
-            
-            # --- Objectness Loss ---
-            obj_targets = torch.zeros_like(pred_o)
-            if matches:
-                pred_idx = torch.tensor([m[0] for m in matches], device=device)
-                obj_targets[pred_idx] = 1.0
-            total_loss += self.loss_weights['obj'] * F.binary_cross_entropy_with_logits(pred_o, obj_targets)
-            loss_dict['objectness'] += F.binary_cross_entropy_with_logits(pred_o, obj_targets, reduction='sum')
 
-            # --- Classification and Box Losses (only for matched pairs) ---
-            if not matches:
-                continue
-
-            pred_idx, gt_idx = zip(*matches)
-            pred_idx = torch.tensor(pred_idx, device=device)
-            gt_idx = torch.tensor(gt_idx, device=device)
-
-            # Class loss
-            cls_targets = torch.full((pred_c.shape[0],), self.num_classes, dtype=torch.long, device=device)
-            cls_targets[pred_idx] = gt_l[gt_idx]
-            cls_weights = self.class_weights.to(device)
-            total_loss += self.loss_weights['class'] * F.cross_entropy(
-                pred_c, cls_targets, weight=cls_weights, reduction='mean'
+            # ---- Classification targets (DETR style) ----
+            target_classes = torch.full(
+                (pred_c.shape[0],),
+                self.num_classes,  # background index
+                dtype=torch.long,
+                device=device
             )
-            loss_dict['class'] += F.cross_entropy(pred_c, cls_targets, reduction='sum')
-            
-            # Box losses
-            matched_pred_boxes = pred_b[pred_idx]
-            matched_gt_boxes = gt_b[gt_idx]
-            
-            bbox_loss = F.l1_loss(matched_pred_boxes, matched_gt_boxes, reduction='sum')
-            total_loss += self.loss_weights['bbox'] * bbox_loss / num_gt
-            loss_dict['bbox'] += bbox_loss
 
-            giou_loss = (1 - torch.diag(generalized_box_iou(matched_pred_boxes, matched_gt_boxes))).sum()
-            total_loss += self.loss_weights['giou'] * giou_loss / num_gt
-            loss_dict['giou'] += giou_loss
+            if matches:
+                pred_idx, gt_idx = zip(*matches)
+                pred_idx = torch.tensor(pred_idx, device=device)
+                gt_idx = torch.tensor(gt_idx, device=device)
 
-        # Normalize losses
-        if num_total_gt > 0:
-            for k in ['class', 'bbox', 'giou', 'objectness']:
-                loss_dict[k] /= num_total_gt
+                target_classes[pred_idx] = gt_l[gt_idx]
+
+            cls_loss = F.cross_entropy(
+                pred_c,
+                target_classes,
+                weight=self.class_weights.to(device),
+                reduction='mean'
+            )
+
+            total_loss += self.loss_weights['class'] * cls_loss
+            loss_dict['class'] += cls_loss.detach()
+
+            # ---- Box losses (only matched pairs) ----
+            if matches:
+
+                matched_pred_boxes = pred_b[pred_idx]
+                matched_gt_boxes = gt_b[gt_idx]
+
+                bbox_loss = F.l1_loss(
+                    matched_pred_boxes,
+                    matched_gt_boxes,
+                    reduction='sum'
+                ) / num_gt
+
+                giou_loss = (
+                    1 - torch.diag(
+                        generalized_box_iou(matched_pred_boxes, matched_gt_boxes)
+                    )
+                ).sum() / num_gt
+
+                total_loss += self.loss_weights['bbox'] * bbox_loss
+                total_loss += self.loss_weights['giou'] * giou_loss
+
+                loss_dict['bbox'] += bbox_loss.detach()
+                loss_dict['giou'] += giou_loss.detach()
+
         loss_dict['total'] = total_loss / batch_size
         return loss_dict
