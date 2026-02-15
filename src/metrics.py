@@ -25,80 +25,76 @@ class DetectionMetrics:
         self.false_negatives = 0
     
     @torch.no_grad()
-    def update(self, pred_boxes, pred_classes, pred_objectness, gt_boxes_list, gt_labels_list):
+    def update(self, pred_boxes, pred_classes, gt_boxes_list, gt_labels_list, score_threshold=0.5):
         """
-        Update metrics with a batch of predictions
-        
-        Args:
-            pred_boxes: [B, N, 4] predicted boxes (normalized [0,1])
-            pred_classes: [B, N, num_classes+1] predicted class logits
-            pred_objectness: [B, N, 1] objectness scores
-            gt_boxes_list: list of [M, 4] ground truth boxes per image
-            gt_labels_list: list of [M] ground truth labels per image
+        Update metrics for DETR-style predictions
         """
+
         batch_size = pred_boxes.shape[0]
-        
+
         for i in range(batch_size):
-            # Get predictions for this image
-            obj_scores = pred_objectness[i].sigmoid().squeeze(-1)  # [N]
-            class_probs = torch.softmax(pred_classes[i], dim=-1)  # [N, num_classes+1]
-            
-            # Filter predictions by objectness threshold
-            obj_mask = obj_scores > 0.5
-            if obj_mask.sum() == 0:
-                # No detections, all GT are false negatives
+
+            # Softmax over classes
+            probs = torch.softmax(pred_classes[i], dim=-1)  # [N, num_classes+1]
+
+            # Remove background class (last index)
+            scores, labels = probs[:, :-1].max(dim=-1)  # [N]
+
+            # Filter by score threshold
+            keep = scores > score_threshold
+
+            if keep.sum() == 0:
                 self.false_negatives += len(gt_labels_list[i])
                 continue
-            
-            pred_boxes_i = pred_boxes[i][obj_mask]  # [K, 4]
-            pred_class_probs = class_probs[obj_mask]  # [K, num_classes+1]
-            
-            # Get predicted class (excluding background class)
-            pred_labels_i = pred_class_probs[:, :-1].argmax(dim=-1)  # [K]
-            
-            # Get ground truth for this image
-            gt_boxes_i = gt_boxes_list[i]  # [M, 4]
-            gt_labels_i = gt_labels_list[i]  # [M]
-            
+
+            pred_boxes_i = pred_boxes[i][keep]
+            pred_labels_i = labels[keep]
+            scores_i = scores[keep]
+
+            gt_boxes_i = gt_boxes_list[i]
+            gt_labels_i = gt_labels_list[i]
+
             if len(gt_boxes_i) == 0:
-                # No ground truth, all predictions are false positives
                 self.false_positives += len(pred_labels_i)
                 self.all_pred_labels.extend(pred_labels_i.cpu().numpy())
                 continue
-            
-            # Compute IoU between all pred and gt boxes
-            ious = self._box_iou(pred_boxes_i, gt_boxes_i)  # [K, M]
-            
-            # Match predictions to ground truth
+
+            # Compute IoU
+            ious = self._box_iou(pred_boxes_i, gt_boxes_i)
+
             matched_gt = set()
+
             for pred_idx in range(len(pred_boxes_i)):
+
                 max_iou, gt_idx = ious[pred_idx].max(dim=0)
                 gt_idx = gt_idx.item()
-                
+
                 pred_label = pred_labels_i[pred_idx].item()
-                
+
                 if max_iou >= self.iou_threshold and gt_idx not in matched_gt:
-                    # Matched detection
+
                     gt_label = gt_labels_i[gt_idx].item()
                     matched_gt.add(gt_idx)
-                    
+
                     self.all_pred_labels.append(pred_label)
                     self.all_true_labels.append(gt_label)
-                    
+
                     if pred_label == gt_label:
                         self.true_positives += 1
                     else:
                         self.false_positives += 1
+
                 else:
-                    # False positive (no match or wrong IoU)
                     self.false_positives += 1
                     self.all_pred_labels.append(pred_label)
-            
-            # Count unmatched ground truth as false negatives
+
+            # Unmatched GT → FN
             self.false_negatives += len(gt_labels_i) - len(matched_gt)
+
             for gt_idx in range(len(gt_labels_i)):
                 if gt_idx not in matched_gt:
                     self.all_true_labels.append(gt_labels_i[gt_idx].item())
+
     
     def _box_iou(self, boxes1, boxes2):
         """
@@ -223,7 +219,9 @@ def plot_training_curves(history, save_dir):
     if 'train_loss_components' in history and len(history['train_loss_components']) > 0:
         plt.figure(figsize=(12, 8))
         
-        components = ['class', 'bbox', 'giou', 'objectness']
+        # components = ['class', 'bbox', 'giou', 'objectness']
+        components = ['class', 'bbox', 'giou']
+
         for idx, comp in enumerate(components, 1):
             plt.subplot(2, 2, idx)
             comp_losses = [epoch_loss.get(comp, 0) for epoch_loss in history['train_loss_components']]

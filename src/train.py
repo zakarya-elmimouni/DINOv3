@@ -172,13 +172,16 @@ class Trainer:
             gt_labels = [l.to(self.device) for l in labels_list]
             
             with autocast('cuda', enabled=self.config['use_amp']):
-                pred_boxes, pred_classes, pred_objectness = self.model(images)
-                loss_dict = self.criterion(pred_boxes, pred_classes, pred_objectness, gt_boxes_normalized, gt_labels)
+                # pred_boxes, pred_classes, pred_objectness = self.model(images)
+                # loss_dict = self.criterion(pred_boxes, pred_classes, pred_objectness, gt_boxes_normalized, gt_labels)
+                pred_boxes, pred_classes = self.model(images)
+                loss_dict = self.criterion(pred_boxes, pred_classes, gt_boxes_normalized, gt_labels)
             
             losses.update(loss_dict['total'].item(), images.size(0))
             
             # Update metrics
-            metrics.update(pred_boxes, pred_classes, pred_objectness, gt_boxes_normalized, gt_labels)
+            # metrics.update(pred_boxes, pred_classes, pred_objectness, gt_boxes_normalized, gt_labels)
+            metrics.update(pred_boxes, pred_classes, gt_boxes_normalized, gt_labels)
             
             pbar.set_postfix({'val_loss': f"{losses.avg:.4f}"})
         

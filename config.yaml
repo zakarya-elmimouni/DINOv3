@@ -9,9 +9,9 @@ model:
   # Leave empty to train from scratch, or provide path to .pth file
   backbone_weights_path: 'dinov3_vitl16_pretrain_sat493m-eadcf0ff.pth'
   
-  freeze_backbone: False  # Train the backbone from scratch
+  freeze_backbone: True  # Train the backbone from scratch
   adapter_dim: 256
-  num_queries: 50
+  num_queries: 10
   img_size: 500 # Should match the img_size in the dataset section
 
 # -------------------
@@ -29,8 +29,8 @@ dataset:
 optimizer:
   epochs: 40
   batch_size: 16  # Increased since smaller model uses less memory
-  learning_rate: 0.001  # Lower LR for training the adapter on frozen backbone
-  weight_decay: 0.0001
+  learning_rate: 0.0001  # Lower LR for training the adapter on frozen backbone
+  weight_decay: 0.001
 
 # -------------------
 # Loss Weights
@@ -47,4 +47,4 @@ loss_weights:
 checkpoint_dir: 'checkpoints_Detr_decoder'
 num_workers: 0 # Number of CPU cores for data loading. Set to 0 if you have memory issues on Windows.
 use_amp: True # Use Automatic Mixed Precision (recommended for modern GPUs)
-patience: 10  # Early stopping patience (number of epochs without improvement)
+patience: 20  # Early stopping patience (number of epochs without improvement)
