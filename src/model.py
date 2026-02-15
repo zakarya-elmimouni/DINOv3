@@ -67,6 +67,53 @@ class SimpleDetectionHead(nn.Module):
         ffn_out = self.ffn(queries)
         queries = self.norm2(queries + ffn_out)
         return self.bbox_head(queries).sigmoid(), self.class_head(queries), self.objectness_head(queries)
+    
+class DETRDecoderHead(nn.Module):
+    def __init__(self, hidden_dim, num_classes, num_queries=100, num_layers=6):
+        super().__init__()
+
+        self.hidden_dim = hidden_dim
+        self.num_queries = num_queries
+
+        # Learned object queries
+        self.query_embed = nn.Embedding(num_queries, hidden_dim)
+
+        # Positional encoding for memory (learnable)
+        self.pos_embed = nn.Parameter(torch.randn(1, 1000, hidden_dim))
+
+        decoder_layer = nn.TransformerDecoderLayer(
+            d_model=hidden_dim,
+            nhead=8,
+            dim_feedforward=hidden_dim * 4,
+            batch_first=True
+        )
+
+        self.decoder = nn.TransformerDecoder(decoder_layer, num_layers=num_layers)
+
+        self.class_head = nn.Linear(hidden_dim, num_classes + 1)
+
+        self.bbox_head = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, 4)
+        )
+
+    def forward(self, memory):
+
+        B, N, C = memory.shape
+
+        # Add positional encoding
+        memory = memory + self.pos_embed[:, :N]
+
+        queries = self.query_embed.weight.unsqueeze(0).repeat(B, 1, 1)
+
+        hs = self.decoder(queries, memory)
+
+        class_logits = self.class_head(hs)
+        bbox = self.bbox_head(hs).sigmoid()
+
+        return bbox, class_logits
+
 
 class DINOv3Detector(nn.Module):
     def __init__(self, backbone_name='dinov3_vitl16', backbone_weights_path=None, num_classes=80, adapter_dim=256, num_queries=100, freeze_backbone=True):
