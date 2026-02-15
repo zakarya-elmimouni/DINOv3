@@ -11,7 +11,7 @@ model:
   
   freeze_backbone: True  # lrTrain the backbone from scratch
   adapter_dim: 256
-  num_queries: 1
+  num_queries: 2
   img_size: 500 # Should match the img_size in the dataset section
 
 # -------------------

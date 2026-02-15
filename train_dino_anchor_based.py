@@ -11,6 +11,8 @@ import os
 from PIL import Image, ImageFile
 import glob
 import random
+from dinov3.hub import backbones as dinov3_backbones
+from safetensors.torch import load_file
 
 
 
@@ -41,18 +43,49 @@ LBL_DIR_TEST = "dataset/test/labels"
 # ==========================
 # LOAD DINOv3 BACKBONE
 # ==========================
-def load_dino(weights_path):
-    import dinov3
+# def load_dino(weights_path):
+#     import dinov3
 
-    model = dinov3.vitl16()
-    state = torch.load(weights_path, map_location="cpu")
-    model.load_state_dict(state)
+#     model = dinov3_backbones.dinov3_vitl16(pretrain=False)
+#     pretrained_weights = load_file(str(weights_path), device="cpu")
+#     # state = torch.load(weights_path, map_location="cpu")
+#     model.load_state_dict(pretrained_weights,strict=False)
+
+#     model.eval()
+
+#     for p in model.parameters():
+#         p.requires_grad = False
+
+#     return model
+
+def load_dino(weights_path):
+    from dinov3.models.vision_transformer import DinoVisionTransformer
+
+    model = DinoVisionTransformer(
+        img_size=512,
+        patch_size=16,
+        embed_dim=1024,
+        depth=24,
+        num_heads=16,
+        mlp_ratio=4,
+        qkv_bias=True,
+        use_bias=True,
+        use_rms_norm=False,
+        init_values=1e-5,
+    )
+
+    state_dict = torch.load(weights_path, map_location="cpu")
+
+    model.load_state_dict(state_dict, strict=False)  # important
+
     model.eval()
 
     for p in model.parameters():
         p.requires_grad = False
 
     return model
+
+
 
 # ==========================
 # MINI FPN
@@ -161,7 +194,11 @@ def safe_image_open(img_path):
             img = img.convert("RGB")
         
         return img.convert("RGB")
-
+        
+    except Exception as e:
+        print(f"Warning: Failed to open image {img_path}: {e}")
+        # Create a blank image as fallback
+        return Image.new('RGB', (IMG_SIZE, IMG_SIZE), color='white')
 
 def validate_dataset_files(img_dir, lbl_dir):
     """
