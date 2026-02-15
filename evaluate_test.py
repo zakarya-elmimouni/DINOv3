@@ -13,14 +13,14 @@ from src.inference import Inferencer
 # ==========================
 # CONFIG
 # ==========================
-CHECKPOINT_PATH = "checkpoints_Detr_decoder/best_model.pth"
+CHECKPOINT_PATH = "checkpoints_Detr_decoder_100epochs/best_model.pth"
 TEST_IMAGES_DIR = "dataset/test/images"
 TEST_LABELS_DIR = "dataset/test/labels"
 
 CONF_THRESHOLD = 0.25
 IOU_THRESHOLD = 0.5
 
-OUTPUT_DIR = "checkpoints_Detr_decoder/test_results"
+OUTPUT_DIR = "checkpoints_Detr_decoder_100epochs/test_results"
 
 
 # ==========================
