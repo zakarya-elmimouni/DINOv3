@@ -27,7 +27,7 @@ dataset:
 # Optimizer & Scheduler
 # ----------------------
 optimizer:
-  epochs: 50
+  epochs: 60
   batch_size: 16  # Increased since smaller model uses less memory
   learning_rate: 0.0001  # Lower LR for training the adapter on frozen backbone
   weight_decay: 0.001
@@ -44,7 +44,7 @@ loss_weights:
 # -------------------
 # General Settings
 # -------------------
-checkpoint_dir: 'checkpoints_Detr_decoder_100epochs'
+checkpoint_dir: 'checkpoints_Detr_decoder_2queries'  # Directory to save model checkpoints
 num_workers: 0 # Number of CPU cores for data loading. Set to 0 if you have memory issues on Windows.
 use_amp: True # Use Automatic Mixed Precision (recommended for modern GPUs)
 patience: 15  # Early stopping patience (number of epochs without improvement)
